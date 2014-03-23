@@ -9,7 +9,7 @@ public class DemoUI : MonoBehaviour
 	public GameObject cubePrefab;
 	public GameObject spherePrefab;
 	public GameObject capsulePrefab;
-
+	public GameObject bigCube;
 
 	void Start()
 	{
@@ -27,6 +27,12 @@ public class DemoUI : MonoBehaviour
 			TrashMan.despawnAfterDelay( newObj, Random.Range( 1f, 2f ) );
 		}
 
+		
+		if( GUILayout.Button( "Spawn Big Cube" ) )
+		{
+			var newObj = TrashMan.spawn( bigCube, Random.onUnitSphere * 5f, Random.rotation );
+			TrashMan.despawnAfterDelay( newObj, Random.Range( 1f, 2f ) );
+		}
 
 		if( GUILayout.Button( "Spawn Sphere" ) )
 		{
@@ -67,6 +73,11 @@ public class DemoUI : MonoBehaviour
 				prefab = capsulePrefab
 			};
 			TrashMan.manageRecycleBin( recycleBin );
+		}
+		
+		if( GUILayout.Button("Remove Recycle Bin at Runtime"))
+		{
+			TrashMan.removeRecycleBin(capsulePrefab);
 		}
 
 

@@ -22,6 +22,7 @@ public sealed class TrashManRecycleBin
 	/// The prefab or GameObject in the scene managed by this class.
 	/// </summary>
 	public GameObject prefab;
+	
 
 	/// <summary>
 	/// total number of instances to create at start
@@ -58,7 +59,27 @@ public sealed class TrashManRecycleBin
 	/// </summary>
 	public float cullInterval = 10f;
 
-
+	
+	/// <summary>
+	/// The Transform all despawned prefabs are attached to. 
+	/// </summary>
+	public Transform parentTransform
+	{
+		get { 
+			if(_parentTransform == null)
+			{
+				return TrashMan.instance.transform;
+			}
+			else
+			{
+				return _parentTransform;
+			}
+		}
+	}
+	
+	private Transform _parentTransform;
+	
+	
 	/// <summary>
 	/// stores all of our GameObjects
 	/// </summary>
@@ -73,7 +94,7 @@ public sealed class TrashManRecycleBin
 	/// keeps track of the total number of instances spawned
 	/// </summary>
 	private int _spawnedInstanceCount = 0;
-
+	
 
 	#region Private
 
@@ -90,7 +111,7 @@ public sealed class TrashManRecycleBin
 		{
 			GameObject go = GameObject.Instantiate( prefab.gameObject ) as GameObject;
 			go.name = prefab.name;
-			go.transform.parent = TrashMan.instance.transform;
+			go.transform.parent = parentTransform;
 			go.SetActive( false );
 			_gameObjectPool.Push( go );
 		}
@@ -123,13 +144,21 @@ public sealed class TrashManRecycleBin
 	/// <summary>
 	/// preps the Stack and does preallocation
 	/// </summary>
-	public void initialize()
+	public void initialize(Transform trans = null)
 	{
 		//prefab.prefabPoolName = prefab.gameObject.name;
 		_gameObjectPool = new Stack<GameObject>( instancesToPreallocate );
+		_parentTransform = trans;
 		allocateGameObjects( instancesToPreallocate );
 	}
 
+	public void removeAllPooledObjects()
+	{
+		while(_gameObjectPool.Count > 0)
+		{
+			GameObject.Destroy(_gameObjectPool.Pop());
+		}
+	}
 
 	/// <summary>
 	/// culls any excess objects if necessary
